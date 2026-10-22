@@ -3,7 +3,7 @@ name: Build OSPE
 on:
   push:
     branches: [ "master", "main" ]
-  workflow_dispatch:
+  workflow_dispatch: # Позволяет запустить сборку вручную кнопкой на вкладке Actions
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
         foreach ($node in $proj.GetElementsByTagName("TargetFrameworkVersion")) {
             $node.InnerText = "v4.8"
         }
-        foreach ($node in $proj.GetElementsByTagName("TargetFrameworkProfile")) {
+        foreach ($node in @($proj.GetElementsByTagName("TargetFrameworkProfile"))) {
             $node.ParentNode.RemoveChild($node)
         }
         $proj.Save("$PWD\OSPE.csproj")
