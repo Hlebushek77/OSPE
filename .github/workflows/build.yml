@@ -20,9 +20,11 @@ jobs:
       shell: powershell
       run: |
         [xml]$proj = Get-Content OSPE.csproj
-        $proj.Project.PropertyGroup.TargetFrameworkVersion = "v4.8"
-        foreach ($pg in $proj.Project.PropertyGroup) {
-            if ($pg.TargetFrameworkProfile) { $pg.TargetFrameworkProfile = "" }
+        foreach ($node in $proj.GetElementsByTagName("TargetFrameworkVersion")) {
+            $node.InnerText = "v4.8"
+        }
+        foreach ($node in $proj.GetElementsByTagName("TargetFrameworkProfile")) {
+            $node.ParentNode.RemoveChild($node)
         }
         $proj.Save("$PWD\OSPE.csproj")
 
