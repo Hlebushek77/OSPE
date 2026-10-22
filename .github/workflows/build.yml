@@ -28,6 +28,9 @@ jobs:
         }
         $proj.Save("$PWD\OSPE.csproj")
 
+    - name: Restore NuGet Packages
+      run: nuget restore OSPE.sln
+
     - name: Build x86 (Release)
       run: msbuild OSPE.sln /p:Configuration=Release /p:Platform=x86
 
