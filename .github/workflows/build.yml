@@ -1,0 +1,30 @@
+name: Build OSPE
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  workflow_dispatch: # Позволяет запускать сборку вручную кнопкой на сайте GitHub
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build x86 (Release)
+      run: msbuild OSPE.sln /p:Configuration=Release /p:Platform=x86
+
+    - name: Build x64 (Release)
+      run: msbuild OSPE.sln /p:Configuration=Release /p:Platform=x64
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: OSPE-Compiled-Binaries
+        path: |
+          **/Release/
