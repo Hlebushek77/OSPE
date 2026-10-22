@@ -3,7 +3,7 @@ name: Build OSPE
 on:
   push:
     branches: [ "master", "main" ]
-  workflow_dispatch: # Позволяет запускать сборку вручную кнопкой на сайте GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,6 +15,16 @@ jobs:
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
+
+    - name: Retarget .NET Framework to 4.8
+      shell: powershell
+      run: |
+        [xml]$proj = Get-Content OSPE.csproj
+        $proj.Project.PropertyGroup.TargetFrameworkVersion = "v4.8"
+        foreach ($pg in $proj.Project.PropertyGroup) {
+            if ($pg.TargetFrameworkProfile) { $pg.TargetFrameworkProfile = "" }
+        }
+        $proj.Save("$PWD\OSPE.csproj")
 
     - name: Build x86 (Release)
       run: msbuild OSPE.sln /p:Configuration=Release /p:Platform=x86
